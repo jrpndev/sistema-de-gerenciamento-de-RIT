@@ -340,7 +340,131 @@ public class Main {
         professor.setArea(area);
         Crud.cadastrarProfessor(j, con ,  professor.getName(), professor.getId(), professor.getAcademicDegree(), professor.getSalary(), professor.getArea());
     }
+    
+    private static void abrirJanelaFormulario(JFrame j  , String id, Connection connection) {
+        
+        Disciplina disciplina = DisciplinaController.lerDisciplina(connection, id);
+          
+        JFrame janelaFormulario = new JFrame("Formulário de Disciplina");
+        janelaFormulario.setSize(500, 500);
+        janelaFormulario.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
+        JPanel painelPrincipalFormulario = new JPanel();
+        painelPrincipalFormulario.setLayout(new GridLayout(7, 2));
+
+        JLabel labelNome = new JLabel("Nome:");
+        JTextField campoNome = new JTextField(disciplina.getNome());
+
+        JLabel labelDescricao = new JLabel("Descrição:");
+        JTextField campoDescricao = new JTextField(disciplina.getDescricao());
+
+        JLabel labelCargaHoraria = new JLabel("Carga Horária:");
+        JTextField campoCargaHoraria = new JTextField(String.valueOf(disciplina.getCargaHoraria()));
+
+        JLabel labelSalaAula = new JLabel("Sala de Aula:");
+        JTextField campoSalaAula = new JTextField(disciplina.getSalaAula());
+
+        JLabel labelHorario = new JLabel("Horário:");
+        JTextField campoHorario = new JTextField(disciplina.getHorario());
+
+        JButton botaoAtualizar = new JButton("Atualizar");
+        botaoAtualizar.addActionListener(e -> {
+            // Lógica para atualizar a disciplina
+            // ...
+
+            janelaFormulario.dispose(); // Fechar a janela de formulário
+        });
+
+        JButton botaoExcluir = new JButton("Excluir");
+        botaoExcluir.addActionListener(e -> {
+            // Lógica para excluir a disciplina
+            // ...
+
+            janelaFormulario.dispose(); // Fechar a janela de formulário
+        });
+
+        painelPrincipalFormulario.add(labelNome);
+        painelPrincipalFormulario.add(campoNome);
+        painelPrincipalFormulario.add(labelDescricao);
+        painelPrincipalFormulario.add(campoDescricao);
+        painelPrincipalFormulario.add(labelCargaHoraria);
+        painelPrincipalFormulario.add(campoCargaHoraria);
+        painelPrincipalFormulario.add(labelSalaAula);
+        painelPrincipalFormulario.add(campoSalaAula);
+        painelPrincipalFormulario.add(labelHorario);
+        painelPrincipalFormulario.add(campoHorario);
+        painelPrincipalFormulario.add(botaoAtualizar);
+        painelPrincipalFormulario.add(botaoExcluir);
+
+        janelaFormulario.getContentPane().add(painelPrincipalFormulario);
+        janelaFormulario.setVisible(true);
+    }
+    
+    private static void abrirJanelaCadastroDisciplina(Connection connection, String id) {
+        JFrame janelaCadastro = new JFrame("Cadastro de Disciplina");
+        janelaCadastro.setSize(500, 500);
+        janelaCadastro.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+        JPanel painelCadastro = new JPanel();
+        painelCadastro.setLayout(new GridLayout(6, 2, 10, 10));
+
+        JLabel lblNome = new JLabel("Nome:");
+        JTextField txtNome = new JTextField(20);
+
+        JLabel lblDescricao = new JLabel("Descrição:");
+        JTextField txtDescricao = new JTextField(20);
+
+        JLabel lblCargaHoraria = new JLabel("Carga Horária:");
+        JTextField txtCargaHoraria = new JTextField(20);
+
+        JLabel lblSalaAula = new JLabel("Sala de Aula:");
+        JTextField txtSalaAula = new JTextField(20);
+
+        JLabel lblHorario = new JLabel("Horário:");
+        JTextField txtHorario = new JTextField(20);
+
+        JButton btnCadastrar = new JButton("Cadastrar");
+        btnCadastrar.addActionListener(event -> {
+            String nome = txtNome.getText();
+            String descricao = txtDescricao.getText();
+            String cargaHorariaText = txtCargaHoraria.getText();
+            String salaAula = txtSalaAula.getText();
+            String horario = txtHorario.getText();
+
+            // Verificar se algum campo está vazio
+            if (nome.isEmpty() || descricao.isEmpty() || cargaHorariaText.isEmpty() || salaAula.isEmpty() || horario.isEmpty()) {
+                JOptionPane.showMessageDialog(janelaCadastro, "Preencha todos os campos antes de cadastrar a disciplina.");
+                return;
+            }
+
+            int cargaHoraria = Integer.parseInt(cargaHorariaText);
+
+            Disciplina disciplina = new Disciplina(nome, descricao, cargaHoraria, salaAula, horario);
+
+            DisciplinaController.cadastrarDisciplina(janelaCadastro, connection, disciplina, id);
+
+            JOptionPane.showMessageDialog(janelaCadastro, "Disciplina cadastrada com sucesso!");
+        });
+
+
+        painelCadastro.add(lblNome);
+        painelCadastro.add(txtNome);
+        painelCadastro.add(lblDescricao);
+        painelCadastro.add(txtDescricao);
+        painelCadastro.add(lblCargaHoraria);
+        painelCadastro.add(txtCargaHoraria);
+        painelCadastro.add(lblSalaAula);
+        painelCadastro.add(txtSalaAula);
+        painelCadastro.add(lblHorario);
+        painelCadastro.add(txtHorario);
+        painelCadastro.add(new JLabel()); // Espaço vazio para layout
+        painelCadastro.add(btnCadastrar);
+
+        janelaCadastro.getContentPane().add(painelCadastro);
+        janelaCadastro.setVisible(true);
+    }
+
+    
     private static void abrirJanelaNova(JFrame janelaAnterior, String id, Connection con) {
         int larguraAnterior = janelaAnterior.getWidth();
         int alturaAnterior = janelaAnterior.getHeight();
@@ -364,9 +488,82 @@ public class Main {
         tituloRIT.setHorizontalAlignment(SwingConstants.CENTER);
         painelSuperiorNova.add(tituloRIT);
         
-        JButton botaoVerAtividades = new JButton("Consultar atividades");
+        JButton botaoVerAtividades = new JButton("Consultar Coordenação");
         botaoVerAtividades.setBounds(larguraAnterior - 500, 70, 150, 30);
         painelSuperiorNova.add(botaoVerAtividades);
+        
+        JButton botaoVerDisciplinas = new JButton("Consultar Disciplinas");
+        botaoVerDisciplinas.setBounds(larguraAnterior - 720, 70, 200, 30);
+        painelSuperiorNova.add(botaoVerDisciplinas);
+        
+        
+
+        botaoVerDisciplinas.addActionListener(e -> {
+            // Criar a janela de consulta de disciplinas
+            JFrame janelaDisciplina = new JFrame("Disciplinas");
+            janelaDisciplina.setSize(1280, 720);
+            janelaDisciplina.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+
+            JPanel painelPrincipalDisciplina = new JPanel();
+            painelPrincipalDisciplina.setLayout(new BorderLayout());
+
+            DefaultTableModel tableModel = new DefaultTableModel();
+            JTable tabelaDisciplinas = new JTable(tableModel) {
+                @Override
+                public boolean isCellEditable(int row, int column) {
+                    return false; // Desabilitar edição das células
+                }
+            };
+            JScrollPane scrollPane = new JScrollPane(tabelaDisciplinas);
+
+            tableModel.addColumn("Código");
+            tableModel.addColumn("Nome");
+            tableModel.addColumn("Descrição");
+            tableModel.addColumn("Carga Horária");
+            tableModel.addColumn("Sala de Aula");
+            tableModel.addColumn("Horário");
+
+            ArrayList<Disciplina> disciplinas = DisciplinaController.listarDisciplinas(janelaDisciplina, con, id);
+
+            for (Disciplina disciplina : disciplinas) {
+            	
+                Object[] rowData = {disciplina.getCodigo(), disciplina.getNome(), disciplina.getDescricao(),
+                        disciplina.getCargaHoraria(), disciplina.getSalaAula(), disciplina.getHorario()};
+                tableModel.addRow(rowData);
+            }
+
+            tabelaDisciplinas.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    int row = tabelaDisciplinas.rowAtPoint(e.getPoint());
+                    int column = tabelaDisciplinas.columnAtPoint(e.getPoint());
+                    if (row >= 0 && column >= 0) {
+                        int codigo = (int) tabelaDisciplinas.getValueAt(row, 0);
+                        abrirJanelaFormulario(janelaNova, id, con);
+                        
+                    }
+                }
+            });
+
+
+            JButton botaoNovaDisciplina = new JButton("Nova Disciplina");
+            botaoNovaDisciplina.setBounds(larguraAnterior - 720, 30, 200, 30);
+
+            botaoNovaDisciplina.addActionListener(event -> {
+              
+                abrirJanelaCadastroDisciplina(con, id);
+
+                janelaDisciplina.dispose();
+            });
+
+            painelPrincipalDisciplina.add(scrollPane, BorderLayout.CENTER);
+            painelPrincipalDisciplina.add(botaoNovaDisciplina, BorderLayout.NORTH);
+
+            janelaDisciplina.getContentPane().add(painelPrincipalDisciplina);
+            janelaDisciplina.setVisible(true);
+        });
+
+
 
         JButton botaoGerarRelatorio = new JButton("Gerar Relatório");
         botaoGerarRelatorio.setBounds(larguraAnterior - 320, 70, 140, 30);
