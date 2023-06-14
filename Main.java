@@ -341,7 +341,7 @@ public class Main {
         Crud.cadastrarProfessor(j, con ,  professor.getName(), professor.getId(), professor.getAcademicDegree(), professor.getSalary(), professor.getArea());
     }
     
-    private static void abrirJanelaFormulario(JFrame j  , String id, Connection connection) {
+    private static void abrirJanelaFormulario(JFrame j  , int id, Connection connection) {
         
         Disciplina disciplina = DisciplinaController.lerDisciplina(connection, id);
           
@@ -539,8 +539,8 @@ public class Main {
                     int column = tabelaDisciplinas.columnAtPoint(e.getPoint());
                     if (row >= 0 && column >= 0) {
                         int codigo = (int) tabelaDisciplinas.getValueAt(row, 0);
-                        abrirJanelaFormulario(janelaNova, id, con);
-                        
+                        abrirJanelaFormulario(janelaNova, codigo, con);
+             
                     }
                 }
             });

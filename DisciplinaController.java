@@ -31,11 +31,11 @@ public class DisciplinaController {
 	}
 
     
-	public static Disciplina lerDisciplina(Connection connection, String id) {
+	public static Disciplina lerDisciplina(Connection connection, int id) {
 	    String sql = "SELECT * FROM disciplinas WHERE codigo = ?";
 	    try (PreparedStatement statement = connection.prepareStatement(sql)) {
-	        int codigo = Integer.parseInt(id); 
-	        statement.setInt(1, codigo);
+	        
+	        statement.setInt(1, id);
 	        ResultSet resultSet = statement.executeQuery();
 	        if (resultSet.next()) {
 	            String nome = resultSet.getString("nome");
@@ -44,15 +44,18 @@ public class DisciplinaController {
 	            String salaAula = resultSet.getString("sala_aula");
 	            String horario = resultSet.getString("horario");
 	            Disciplina disciplina = new Disciplina(nome, descricao, cargaHoraria, salaAula, horario);
-	            disciplina.setCodigo(codigo);
-	            System.out.println(codigo);
+	            disciplina.setCodigo(id);
+	            System.out.println(id);
 	            return disciplina;
+	        } else {
+	            System.out.println("Disciplina não encontrada.");
 	        }
 	    } catch (SQLException e) {
 	        e.printStackTrace();
 	    }
 	    return null;
 	}
+
 
 
 

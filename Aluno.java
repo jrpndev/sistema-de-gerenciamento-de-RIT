@@ -1,7 +1,8 @@
 public class Aluno {
     private String nome;
     private String matricula;
-    private String nome_projeto;
+    private String nomeProjeto;
+    private String tipo;
 
     public String getNome() {
         return nome;
@@ -20,10 +21,18 @@ public class Aluno {
     }
 
     public String getNomeProjeto() {
-        return nome_projeto;
+        return nomeProjeto;
     }
 
     public void setNomeProjeto(String nomeProjeto) {
-        this.nome_projeto = nomeProjeto;
+        this.nomeProjeto = nomeProjeto;
+    }
+
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
     }
 }

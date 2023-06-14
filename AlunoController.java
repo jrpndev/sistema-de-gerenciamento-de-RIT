@@ -9,19 +9,21 @@ public class AlunoController {
 
         if (connection != null) {
             System.out.println("Conexão com o banco de dados estabelecida.");
-            
         } else {
             System.out.println("Erro ao obter conexão com o banco de dados.");
         }
     }
 
-    public static void cadastrarAluno(Connection connection, String nome, int orientadorId, String matricula, String nomeProjeto, String tabela) {
-        String sql = "INSERT INTO " + tabela + " (matricula, nome, orientador_id, nome_projeto) VALUES (?, ?, ?, ?)";
+    public static void cadastrarAluno(Connection connection, String nome, int orientadorId, String matricula,
+            String nomeProjeto, String tipo, String tabela) {
+        String sql = "INSERT INTO " + tabela
+                + " (matricula, nome, orientador_id, nome_projeto, tipo) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
             statement.setString(2, nome);
             statement.setInt(3, orientadorId);
             statement.setString(4, nomeProjeto);
+            statement.setString(5, tipo);
 
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
@@ -44,10 +46,12 @@ public class AlunoController {
                 String nome = resultSet.getString("nome");
                 int orientadorId = resultSet.getInt("orientador_id");
                 String nomeProjeto = resultSet.getString("nome_projeto");
+                String tipo = resultSet.getString("tipo");
 
                 System.out.println("Nome: " + nome);
                 System.out.println("Orientador ID: " + orientadorId);
                 System.out.println("Nome do Projeto: " + nomeProjeto);
+                System.out.println("Tipo: " + tipo);
             } else {
                 System.out.println("Aluno não encontrado.");
             }
@@ -72,12 +76,11 @@ public class AlunoController {
             System.out.println("Erro ao executar o comando SQL: " + e.getMessage());
         }
     }
-    
+
     public static void deletarAluno(Connection connection, String matricula, String tabela) {
         String sql = "DELETE FROM " + tabela + " WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
-
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
                 System.out.println("Aluno deletado com sucesso!");
