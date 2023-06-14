@@ -463,6 +463,70 @@ public class Main {
         janelaCadastro.getContentPane().add(painelCadastro);
         janelaCadastro.setVisible(true);
     }
+    
+    private static void setAluno(String id, Connection con) {
+        // Criar a janela do formulário
+        JFrame janelaFormulario = new JFrame("Formulário do Aluno");
+        janelaFormulario.setSize(500, 500);
+
+        // Carregar os dados do aluno
+        Aluno aluno = AlunoController.lerAluno(con, id , janelaFormulario);
+
+        // Criar os componentes do formulário
+        JLabel lblNome = new JLabel("Nome:");
+        JTextField txtNome = new JTextField(aluno.getNome());
+        JLabel lblMatricula = new JLabel("Matrícula:");
+        JTextField txtMatricula = new JTextField(aluno.getMatricula());
+        JLabel lblNomeProjeto = new JLabel("Nome do Projeto:");
+        JTextField txtNomeProjeto = new JTextField(aluno.getNomeProjeto());
+        JLabel lblTipo = new JLabel("Tipo:");
+        JTextField txtTipo = new JTextField(aluno.getTipo());
+
+        JButton btnAtualizar = new JButton("Atualizar");
+        btnAtualizar.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Atualizar os dados do aluno com base nos campos do formulário
+                aluno.setNome(txtNome.getText());
+                aluno.setMatricula(txtMatricula.getText());
+                aluno.setNomeProjeto(txtNomeProjeto.getText());
+                aluno.setTipo(txtTipo.getText());
+
+                // Chamar a função de atualizar aluno do AlunoController
+                AlunoController.atualizarAluno(con,aluno, janelaFormulario);
+                JOptionPane.showMessageDialog(null, "Aluno atualizado com sucesso!");
+
+                // Fechar a janela do formulário
+                janelaFormulario.dispose();
+            }
+        });
+
+        JButton btnExcluir = new JButton("Excluir");
+        btnExcluir.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Chamar a função de excluir aluno do AlunoController
+                AlunoController.deletarAluno(con, aluno.getMatricula() , janelaFormulario);
+                JOptionPane.showMessageDialog(null, "Aluno excluído com sucesso!");
+
+                
+                janelaFormulario.dispose();
+            }
+        });
+
+        janelaFormulario.setLayout(new GridLayout(5, 2));
+        janelaFormulario.add(lblNome);
+        janelaFormulario.add(txtNome);
+        janelaFormulario.add(lblMatricula);
+        janelaFormulario.add(txtMatricula);
+        janelaFormulario.add(lblNomeProjeto);
+        janelaFormulario.add(txtNomeProjeto);
+        janelaFormulario.add(lblTipo);
+        janelaFormulario.add(txtTipo);
+        janelaFormulario.add(btnAtualizar);
+        janelaFormulario.add(btnExcluir);
+
+        // Exibir a janela do formulário
+        janelaFormulario.setVisible(true);
+    }
 
     
     private static void abrirJanelaNova(JFrame janelaAnterior, String id, Connection con) {
@@ -495,6 +559,57 @@ public class Main {
         JButton botaoVerDisciplinas = new JButton("Consultar Disciplinas");
         botaoVerDisciplinas.setBounds(larguraAnterior - 720, 70, 200, 30);
         painelSuperiorNova.add(botaoVerDisciplinas);
+        
+        JButton botaoVerAlunos = new JButton("Consultar Alunos");
+        botaoVerAlunos.setBounds(larguraAnterior - 950, 70, 200, 30);
+        painelSuperiorNova.add(botaoVerAlunos);
+
+        botaoVerAlunos.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                // Criar a janela
+                JFrame janelaConsultaAlunos = new JFrame("Consulta de Alunos");
+                janelaConsultaAlunos.setSize(1280, 720);
+
+                // Criar a tabela
+                JTable tabelaAlunos = new JTable();
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Matrícula");
+                model.addColumn("Nome");
+                model.addColumn("Nome do Projeto");
+                model.addColumn("Tipo");
+
+                // Ler os alunos e preencher a tabela
+                ArrayList<Aluno> alunos = AlunoController.lerAlunos(con, id , janelaConsultaAlunos);
+                for (Aluno aluno : alunos) {
+                    model.addRow(new Object[]{aluno.getMatricula(), aluno.getNome(), aluno.getNomeProjeto(), aluno.getTipo()});
+                }
+
+                tabelaAlunos.setModel(model);
+
+                tabelaAlunos.addMouseListener(new MouseAdapter() {
+                    public void mouseClicked(MouseEvent e) {
+                        int linhaSelecionada = tabelaAlunos.getSelectedRow();
+                        int colunaID = 0;
+                        String idAluno = (String) tabelaAlunos.getValueAt(linhaSelecionada, colunaID);
+                        setAluno(idAluno, con);
+                    }
+                });
+
+                
+                JScrollPane scrollPane = new JScrollPane(tabelaAlunos);
+                janelaConsultaAlunos.getContentPane().add(scrollPane);
+
+                
+                janelaConsultaAlunos.setVisible(true);
+            }
+        });
+        
+
+
+
+        JButton botaoVerArtigos = new JButton("Consultar Artigos");
+        botaoVerArtigos.setBounds(larguraAnterior - 1200, 70, 200, 30);
+        painelSuperiorNova.add(botaoVerArtigos);
         
         
 
@@ -590,27 +705,28 @@ public class Main {
 
     
         JLabel nomeLabel = new JLabel("Nome:");
-        nomeLabel.setBounds(50, 100, 100, 30);
+        nomeLabel.setBounds(150, 130, 100, 30);
         JTextField nomeTextField = new JTextField(professor.getName());
-        nomeTextField.setBounds(160, 100, 200, 30);
+        nomeTextField.setBounds(260, 130, 250, 30);
 
         JLabel grauAcademicoLabel = new JLabel("Grau Acadêmico:");
-        grauAcademicoLabel.setBounds(50, 150, 100, 30);
+        grauAcademicoLabel.setBounds(150, 180, 130, 30);
         JTextField grauAcademicoTextField = new JTextField(professor.getAcademicDegree());
-        grauAcademicoTextField.setBounds(160, 150, 200, 30);
+        grauAcademicoTextField.setBounds(290, 180, 250, 30);
 
         JLabel salarioLabel = new JLabel("Salário:");
-        salarioLabel.setBounds(50, 200, 100, 30);
+        salarioLabel.setBounds(150, 230, 100, 30);
         JTextField salarioTextField = new JTextField(String.valueOf(professor.getSalary()));
-        salarioTextField.setBounds(160, 200, 200, 30);
+        salarioTextField.setBounds(260, 230, 250, 30);
 
         JLabel areaLabel = new JLabel("Área:");
-        areaLabel.setBounds(50, 250, 100, 30);
+        areaLabel.setBounds(150, 280, 100, 30);
         JTextField areaTextField = new JTextField(professor.getArea());
-        areaTextField.setBounds(160, 250, 200, 30);
+        areaTextField.setBounds(260, 280, 250, 30);
 
         JButton atualizarButton = new JButton("Atualizar");
-        atualizarButton.setBounds(50, 300, 100, 30);
+        atualizarButton.setBounds(150, 330, 150, 30);
+
 
         atualizarButton.addActionListener(new ActionListener() {
             @Override
@@ -663,4 +779,3 @@ public class Main {
 
 
 }
-

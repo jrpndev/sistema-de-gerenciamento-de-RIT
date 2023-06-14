@@ -4,6 +4,13 @@ public class Aluno {
     private String nomeProjeto;
     private String tipo;
 
+    public Aluno(String nome, String matricula, String nomeProjeto, String tipo) {
+        this.nome = nome;
+        this.matricula = matricula;
+        this.nomeProjeto = nomeProjeto;
+        this.tipo = tipo;
+    }
+
     public String getNome() {
         return nome;
     }

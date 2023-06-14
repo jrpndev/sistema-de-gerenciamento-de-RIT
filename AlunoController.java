@@ -2,20 +2,15 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 
 public class AlunoController {
-    public static void main(String[] args) {
-        Connection connection = Conexao.obterConexao();
-
-        if (connection != null) {
-            System.out.println("Conexão com o banco de dados estabelecida.");
-        } else {
-            System.out.println("Erro ao obter conexão com o banco de dados.");
-        }
-    }
+    // Restante do código...
 
     public static void cadastrarAluno(Connection connection, String nome, int orientadorId, String matricula,
-            String nomeProjeto, String tipo, String tabela) {
+            String nomeProjeto, String tipo, String tabela, JFrame frame) {
         String sql = "INSERT INTO " + tabela
                 + " (matricula, nome, orientador_id, nome_projeto, tipo) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
@@ -27,17 +22,17 @@ public class AlunoController {
 
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("Aluno cadastrado com sucesso!");
+                JOptionPane.showMessageDialog(frame, "Aluno cadastrado com sucesso!");
             } else {
-                System.out.println("Falha ao cadastrar o aluno.");
+                JOptionPane.showMessageDialog(frame, "Falha ao cadastrar o aluno.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao executar o comando SQL: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
         }
     }
 
-    public static void lerAluno(Connection connection, String matricula, String tabela) {
-        String sql = "SELECT * FROM " + tabela + " WHERE matricula = ?";
+    public static Aluno lerAluno(Connection connection, String matricula, JFrame frame) {
+        String sql = "SELECT * FROM aluno WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
 
@@ -48,47 +43,87 @@ public class AlunoController {
                 String nomeProjeto = resultSet.getString("nome_projeto");
                 String tipo = resultSet.getString("tipo");
 
-                System.out.println("Nome: " + nome);
-                System.out.println("Orientador ID: " + orientadorId);
-                System.out.println("Nome do Projeto: " + nomeProjeto);
-                System.out.println("Tipo: " + tipo);
+                Aluno aluno = new Aluno(matricula, nome, nomeProjeto, tipo);
+
+                String mensagem = "Nome: " + aluno.getNome() + "\n"
+                        + "Orientador ID: " + orientadorId + "\n"
+                        + "Nome do Projeto: " + aluno.getNomeProjeto() + "\n"
+                        + "Tipo: " + aluno.getTipo();
+                JOptionPane.showMessageDialog(frame, mensagem);
+                
+                return aluno;
             } else {
-                System.out.println("Aluno não encontrado.");
+                JOptionPane.showMessageDialog(frame, "Aluno não encontrado.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao executar o comando SQL: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
         }
+        return null;
     }
 
-    public static void atualizarAluno(Connection connection, String matricula, String novoNome, String tabela) {
-        String sql = "UPDATE " + tabela + " SET nome = ? WHERE matricula = ?";
+
+    public static ArrayList<Aluno> lerAlunos(Connection connection, String professorId, JFrame frame) {
+        ArrayList<Aluno> alunos = new ArrayList<>();
+        String sql = "SELECT * FROM aluno WHERE orientador_id = ?";
+
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, novoNome);
-            statement.setString(2, matricula);
+            statement.setString(1, professorId);
+
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                String matricula = resultSet.getString("matricula");
+                String nome = resultSet.getString("nome");
+                String nomeProjeto = resultSet.getString("nome_projeto");
+                String tipo = resultSet.getString("tipo");
+
+                Aluno aluno = new Aluno(matricula, nome, nomeProjeto, tipo);
+                alunos.add(aluno);
+            }
+
+            if (alunos.isEmpty()) {
+                JOptionPane.showMessageDialog(frame, "Nenhum aluno encontrado para o professor com ID: " + professorId);
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
+        }
+
+        return alunos;
+    }
+
+    public static void atualizarAluno(Connection connection, Aluno aluno, JFrame frame) {
+        String sql = "UPDATE aluno SET nome = ?, nome_projeto = ?, tipo = ? WHERE matricula = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, aluno.getNome());
+            statement.setString(2, aluno.getNomeProjeto());
+            statement.setString(3, aluno.getTipo());
+            statement.setString(4, aluno.getMatricula());
 
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("Aluno atualizado com sucesso!");
+                JOptionPane.showMessageDialog(frame, "Aluno atualizado com sucesso!");
             } else {
-                System.out.println("Falha ao atualizar o aluno.");
+                JOptionPane.showMessageDialog(frame, "Falha ao atualizar o aluno.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao executar o comando SQL: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
         }
     }
 
-    public static void deletarAluno(Connection connection, String matricula, String tabela) {
-        String sql = "DELETE FROM " + tabela + " WHERE matricula = ?";
+
+
+    public static void deletarAluno(Connection connection, String matricula , JFrame frame) {
+        String sql = "DELETE FROM aluno WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
-                System.out.println("Aluno deletado com sucesso!");
+                JOptionPane.showMessageDialog(frame, "Aluno deletado com sucesso!");
             } else {
-                System.out.println("Falha ao deletar o aluno.");
+                JOptionPane.showMessageDialog(frame, "Falha ao deletar o aluno.");
             }
         } catch (SQLException e) {
-            System.out.println("Erro ao executar o comando SQL: " + e.getMessage());
+            JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
         }
     }
 }
+
