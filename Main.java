@@ -68,7 +68,7 @@ public class Main {
 
                     if (linhaSelecionada != -1 && colunaSelecionada != -1) {
                         String professorId = (String) tabela.getValueAt(linhaSelecionada, 1); // Obtém o ID do professor
-                                                                                              // da célula selecionada
+                                                                                              
                         abrirJanelaNova(janela, professorId, connection);
                     }
                 }
@@ -579,7 +579,7 @@ public class Main {
         int larguraAnterior = janelaAnterior.getWidth();
         int alturaAnterior = janelaAnterior.getHeight();
 
-        JFrame janelaNova = new JFrame("Janela Nova");
+        JFrame janelaNova = new JFrame("Menu Principal");
         janelaNova.setSize(larguraAnterior, alturaAnterior);
 
         janelaNova.getContentPane().setBackground(new Color(255, 255, 204));

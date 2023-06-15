@@ -11,25 +11,5 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/jrpncodes/Documents/jasperreports/jasperreports-6.20.5.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/jrpncodes/Documents/jasperreports/jasperreports-chart-themes-6.20.5.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/jrpncodes/Documents/jasperreports/jasperreports-fonts-6.20.5.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/jrpncodes/Documents/jasperreports/jasperreports-functions-6.20.5.jar">
-		<attributes>
-			<attribute name="module" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="output" path=""/>
 </classpath>
