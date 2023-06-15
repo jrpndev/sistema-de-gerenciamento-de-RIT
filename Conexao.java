@@ -1,9 +1,13 @@
+
+import java.io.FileReader;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 public class Conexao {
-	
+    
     private static final String URL = "jdbc:mysql://localhost:3306/rit";
     private static final String USUARIO = "root";
     private static final String SENHA = "";
@@ -16,5 +20,5 @@ public class Conexao {
             return null;
         }
     }
-
+  
 }

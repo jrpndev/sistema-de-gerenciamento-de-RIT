@@ -9,14 +9,14 @@ import javax.swing.JOptionPane;
 public class AlunoController {
     // Restante do código...
 
-    public static void cadastrarAluno(Connection connection, String nome, int orientadorId, String matricula,
+    public static void cadastrarAluno(Connection connection, String nome, String orientadorId, String matricula,
             String nomeProjeto, String tipo, String tabela, JFrame frame) {
         String sql = "INSERT INTO " + tabela
                 + " (matricula, nome, orientador_id, nome_projeto, tipo) VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
             statement.setString(2, nome);
-            statement.setInt(3, orientadorId);
+            statement.setString(3, orientadorId);
             statement.setString(4, nomeProjeto);
             statement.setString(5, tipo);
 
@@ -45,12 +45,6 @@ public class AlunoController {
 
                 Aluno aluno = new Aluno(matricula, nome, nomeProjeto, tipo);
 
-                String mensagem = "Nome: " + aluno.getNome() + "\n"
-                        + "Orientador ID: " + orientadorId + "\n"
-                        + "Nome do Projeto: " + aluno.getNomeProjeto() + "\n"
-                        + "Tipo: " + aluno.getTipo();
-                JOptionPane.showMessageDialog(frame, mensagem);
-                
                 return aluno;
             } else {
                 JOptionPane.showMessageDialog(frame, "Aluno não encontrado.");
@@ -60,7 +54,6 @@ public class AlunoController {
         }
         return null;
     }
-
 
     public static ArrayList<Aluno> lerAlunos(Connection connection, String professorId, JFrame frame) {
         ArrayList<Aluno> alunos = new ArrayList<>();
@@ -78,10 +71,6 @@ public class AlunoController {
 
                 Aluno aluno = new Aluno(matricula, nome, nomeProjeto, tipo);
                 alunos.add(aluno);
-            }
-
-            if (alunos.isEmpty()) {
-                JOptionPane.showMessageDialog(frame, "Nenhum aluno encontrado para o professor com ID: " + professorId);
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(frame, "Erro ao executar o comando SQL: " + e.getMessage());
@@ -109,9 +98,7 @@ public class AlunoController {
         }
     }
 
-
-
-    public static void deletarAluno(Connection connection, String matricula , JFrame frame) {
+    public static void deletarAluno(Connection connection, String matricula, JFrame frame) {
         String sql = "DELETE FROM aluno WHERE matricula = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, matricula);
@@ -126,4 +113,3 @@ public class AlunoController {
         }
     }
 }
-

@@ -1,15 +1,14 @@
 public class Artigo {
+    private int id;
     private String titulo;
-    private String autor;
-    private int anoPublicacao;
-    private String conteudo;
+    private String resumo;
 
-   
-    public Artigo(String titulo, String autor, int anoPublicacao, String conteudo) {
-        this.titulo = titulo;
-        this.autor = autor;
-        this.anoPublicacao = anoPublicacao;
-        this.conteudo = conteudo;
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getTitulo() {
@@ -20,28 +19,11 @@ public class Artigo {
         this.titulo = titulo;
     }
 
-    public String getAutor() {
-        return autor;
+    public String getResumo() {
+        return resumo;
     }
 
-    public void setAutor(String autor) {
-        this.autor = autor;
+    public void setResumo(String resumo) {
+        this.resumo = resumo;
     }
-
-    public int getAnoPublicacao() {
-        return anoPublicacao;
-    }
-
-    public void setAnoPublicacao(int anoPublicacao) {
-        this.anoPublicacao = anoPublicacao;
-    }
-
-    public String getConteudo() {
-        return conteudo;
-    }
-
-    public void setConteudo(String conteudo) {
-        this.conteudo = conteudo;
-    }
-
 }
