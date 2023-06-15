@@ -108,12 +108,12 @@ public class Crud {
 
             int linhasAfetadas = statement.executeUpdate();
             if (linhasAfetadas > 0) {
-                JOptionPane.showMessageDialog(j, "Professor atualizado com sucesso");
+                JOptionPane.showMessageDialog(j, "Professor deletado com sucesso");
             } else {
                 JOptionPane.showMessageDialog(j, "Falha ao deletar professor");
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(j, "Atividade atualizada com sucesso!" + e.getMessage());
+            JOptionPane.showMessageDialog(j, "Erro ao deletar professor, outro registro depende dessa chave!");
         }
     }
 

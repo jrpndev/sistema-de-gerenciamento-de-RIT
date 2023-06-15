@@ -8,13 +8,6 @@ import java.sql.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import net.sf.jasperreports.engine.*;
-import net.sf.jasperreports.engine.data.JRBeanArrayDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.swing.JRViewer;
-import net.sf.jasperreports.view.JasperViewer;
 
 
 
@@ -96,7 +89,6 @@ public class Main {
     public static void abrirJanelaAtividades(Connection con, String id) {
         JFrame janela = new JFrame("Tela de Atividades");
         janela.setSize(1280, 720);
-        janela.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         JPanel painelPrincipal = new JPanel();
         painelPrincipal.setLayout(new BorderLayout());
@@ -104,17 +96,15 @@ public class Main {
         JButton cadastrarAtividade = new JButton("Criar nova atividade");
 
         cadastrarAtividade.addActionListener(e -> {
-
             // Criar a janela de cadastro de atividade
             JFrame janelaAtividade = new JFrame("Cadastro de Atividade");
             janelaAtividade.setSize(500, 500);
             janelaAtividade.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            janelaAtividade.setLayout(null);
+            janelaAtividade.setLayout(new BorderLayout());
 
             // Painel para os campos da atividade
             JPanel painelCampos = new JPanel();
             painelCampos.setLayout(null);
-            painelCampos.setBounds(10, 0, 500, 500);
 
             // Campo Nome
             JLabel labelNome = new JLabel("Nome:");
@@ -144,7 +134,6 @@ public class Main {
             cadastrarAtividadeBtn.setBounds(10, 100, 100, 25);
 
             cadastrarAtividadeBtn.addActionListener(event -> {
-
                 String nome = campoNome.getText();
                 String descricao = campoDescricao.getText();
                 java.util.Date data = null;
@@ -162,12 +151,13 @@ public class Main {
                 janelaAtividade.dispose();
             });
 
+            painelCampos.add(cadastrarAtividadeBtn);
+
             janelaAtividade.add(painelCampos, BorderLayout.CENTER);
-            janelaAtividade.add(cadastrarAtividadeBtn, BorderLayout.SOUTH);
 
             janelaAtividade.setVisible(true);
-
         });
+
 
         painelPrincipal.add(cadastrarAtividade, BorderLayout.WEST);
         ArrayList<Atividades> atividades = AtividadeController.lerAtividades(con, id);
@@ -789,9 +779,7 @@ public class Main {
                         JFrame janelaCadastro = new JFrame();
                         janelaCadastro.setTitle("Cadastro de Artigo");
                         janelaCadastro.setSize(500, 500);
-                        janelaCadastro.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
                         janelaCadastro.setLayout(new GridLayout(4, 2));
-
                         // Campos do formulário
                         JLabel labelTitulo = new JLabel("Título:");
                         JTextField campoTitulo = new JTextField();
@@ -852,8 +840,6 @@ public class Main {
             // Criar a janela de consulta de disciplinas
             JFrame janelaDisciplina = new JFrame("Disciplinas");
             janelaDisciplina.setSize(1280, 720);
-            janelaDisciplina.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-
             JPanel painelPrincipalDisciplina = new JPanel();
             painelPrincipalDisciplina.setLayout(new BorderLayout());
 
@@ -920,21 +906,17 @@ public class Main {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                	
-                	JFrame j = new JFrame();
-                    // Carregar o arquivo do relatório (.jrxml)
-                	JasperReport jasperReport = JasperCompileManager.compileReport("./reports/relatorio.jrxml");
+                    JFrame janela = new JFrame();
+                    janela.setTitle("Relatório");
+                    janela.setSize(1280, 720);
+                    janela.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    janela.setLayout(new GridLayout(0, 1)); // Layout para organizar as tabelas verticalmente
+                    int espacamentoPadrao = 10; // Espaçamento entre as tabelas
 
-                    // Definir os parâmetros do relatório, se houver
-                    Map<String, Object> parametros = new HashMap<>();
-                    parametros.put("tituloRelatorio", "Relatório de Dados");
-
-                    // Ler as atividades do banco de dados
+                    // Preencher a lista de atividades
                     ArrayList<Atividades> atividades = AtividadeController.lerAtividades(con, id);
-                    String[] atividadesColumnNames = {"ID", "Nome", "Descrição", "Data"}; // Substitua pelos nomes das colunas corretos
-
-                    Object[][] atividadesData = new Object[atividades.size()][4]; // 4 representa o número de colunas
-
+                    String[] atividadesColumnNames = {"ID", "Nome", "Descrição", "Data"};
+                    Object[][] atividadesData = new Object[atividades.size()][4];
                     for (int i = 0; i < atividades.size(); i++) {
                         Atividades atividade = atividades.get(i);
                         atividadesData[i][0] = atividade.getId();
@@ -943,12 +925,20 @@ public class Main {
                         atividadesData[i][3] = atividade.getData();
                     }
 
-                    // Ler os alunos do banco de dados
-                    ArrayList<Aluno> alunos = AlunoController.lerAlunos(con, id, j);
-                    String[] alunosColumnNames = {"Nome", "Matrícula", "Nome do Projeto", "Tipo"}; // Substitua pelos nomes das colunas corretos
+                    // Tabela de atividades
+                    JLabel labelAtividades = new JLabel("Atividades");
+                    janela.add(labelAtividades);
+                    JTable tabelaAtividades = new JTable(atividadesData, atividadesColumnNames);
+                    JScrollPane scrollAtividades = new JScrollPane(tabelaAtividades);
+                    janela.add(scrollAtividades);
 
-                    Object[][] alunosData = new Object[alunos.size()][4]; // 4 representa o número de colunas
+                    // Espaçamento entre as tabelas
+                    janela.add(Box.createRigidArea(new Dimension(0, espacamentoPadrao)));
 
+                    // Preencher a lista de alunos
+                    ArrayList<Aluno> alunos = AlunoController.lerAlunos(con, id, janela);
+                    String[] alunosColumnNames = {"Nome", "Matrícula", "Nome do Projeto", "Tipo"};
+                    Object[][] alunosData = new Object[alunos.size()][4];
                     for (int i = 0; i < alunos.size(); i++) {
                         Aluno aluno = alunos.get(i);
                         alunosData[i][0] = aluno.getNome();
@@ -957,12 +947,20 @@ public class Main {
                         alunosData[i][3] = aluno.getTipo();
                     }
 
-                    // Listar os artigos do professor
+                    // Tabela de alunos
+                    JLabel labelAlunos = new JLabel("Alunos");
+                    janela.add(labelAlunos);
+                    JTable tabelaAlunos = new JTable(alunosData, alunosColumnNames);
+                    JScrollPane scrollAlunos = new JScrollPane(tabelaAlunos);
+                    janela.add(scrollAlunos);
+
+                    // Espaçamento entre as tabelas
+                    janela.add(Box.createRigidArea(new Dimension(0, espacamentoPadrao)));
+
+                    // Preencher a lista de artigos
                     ArrayList<Artigo> artigos = artigoController.listarArtigosPorProfessor(con, id);
-                    String[] artigosColumnNames = {"ID", "Título", "Resumo"}; // Substitua pelos nomes das colunas corretos
-
-                    Object[][] artigosData = new Object[artigos.size()][3]; // 3 representa o número de colunas
-
+                    String[] artigosColumnNames = {"ID", "Título", "Resumo"};
+                    Object[][] artigosData = new Object[artigos.size()][3];
                     for (int i = 0; i < artigos.size(); i++) {
                         Artigo artigo = artigos.get(i);
                         artigosData[i][0] = artigo.getId();
@@ -970,41 +968,46 @@ public class Main {
                         artigosData[i][2] = artigo.getResumo();
                     }
 
-                    // Listar as disciplinas
-                    ArrayList<Disciplina> disciplinas = DisciplinaController.listarDisciplinas(j, con, id);
-                    String[] disciplinasColumnNames = {"Código", "Nome", "Descrição", "Carga Horária", "Sala de Aula", "Horário"}; // Substitua pelos nomes das colunas corretos
+                    // Tabela de artigos
+                    JLabel labelArtigos = new JLabel("Artigos");
+                    janela.add(labelArtigos);
+                    JTable tabelaArtigos = new JTable(artigosData, artigosColumnNames);
+                    JScrollPane scrollArtigos = new JScrollPane(tabelaArtigos);
+                    janela.add(scrollArtigos);
 
-                    Object[][] disciplinasData = new Object[disciplinas.size()][6]; // 6
-                    // Criar um HashMap para armazenar os dados do relatório
-                    Map<String, Object> dadosRelatorio = new HashMap<>();
-                    dadosRelatorio.put("atividadesData", atividadesData);
-                    dadosRelatorio.put("atividadesColumnNames", atividadesColumnNames);
-                    dadosRelatorio.put("alunosData", alunosData);
-                    dadosRelatorio.put("alunosColumnNames", alunosColumnNames);
-                    dadosRelatorio.put("artigosData", artigosData);
-                    dadosRelatorio.put("artigosColumnNames", artigosColumnNames);
-                    dadosRelatorio.put("disciplinasData", disciplinasData);
-                    dadosRelatorio.put("disciplinasColumnNames", disciplinasColumnNames);
+                    // Espaçamento entre as tabelas
+                    janela.add(Box.createRigidArea(new Dimension(0, espacamentoPadrao)));
 
-                    // Criar um JRDataSource a partir dos dados do relatório
-                    JRDataSource dataSource = new JRBeanArrayDataSource(new Object[] { dadosRelatorio });
+                    // Preencher a lista de disciplinas
+                    ArrayList<Disciplina> disciplinas = DisciplinaController.listarDisciplinas(janela, con, id);
+                    String[] disciplinasColumnNames = {"Código", "Nome", "Descrição", "Carga Horária", "Sala de Aula", "Horário"};
+                    Object[][] disciplinasData = new Object[disciplinas.size()][6];
+                    for (int i = 0; i < disciplinas.size(); i++) {
+                        Disciplina disciplina = disciplinas.get(i);
+                        disciplinasData[i][0] = disciplina.getCodigo();
+                        disciplinasData[i][1] = disciplina.getNome();
+                        disciplinasData[i][2] = disciplina.getDescricao();
+                        disciplinasData[i][3] = disciplina.getCargaHoraria();
+                        disciplinasData[i][4] = disciplina.getSalaAula();
+                        disciplinasData[i][5] = disciplina.getHorario();
+                    }
 
-                    // Preencher o relatório com os dados e parâmetros
-                    JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parametros, dataSource);
+                    // Tabela de disciplinas
+                    JLabel labelDisciplinas = new JLabel("Disciplinas");
+                    janela.add(labelDisciplinas);
+                    JTable tabelaDisciplinas = new JTable(disciplinasData, disciplinasColumnNames);
+                    JScrollPane scrollDisciplinas = new JScrollPane(tabelaDisciplinas);
+                    janela.add(scrollDisciplinas);
 
-                    // Exibir o relatório em uma janela
-                    JRViewer viewer = new JRViewer(jasperPrint);
-                    JFrame relatorioFrame = new JFrame("Relatório");
-                    relatorioFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                    relatorioFrame.setSize(800, 600);
-                    relatorioFrame.getContentPane().add(viewer);
-                    relatorioFrame.setVisible(true);
+                    // Exibir a janela
+                    janela.setVisible(true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Erro ao gerar relatório: " + ex.getMessage());
                 }
             }
         });
+
       
 
 
@@ -1059,8 +1062,6 @@ public class Main {
                 professor.setArea(areaTextField.getText());
 
                 Crud.atualizarProfessor(janelaNova, connection, id, professor);
-
-                JOptionPane.showMessageDialog(janelaNova, "Professor atualizado com sucesso!");
             }
         });
 
@@ -1077,7 +1078,6 @@ public class Main {
         janelaNova.setSize(larguraAnterior, alturaAnterior);
         janelaNova.setLocationRelativeTo(null);
 
-        janelaNova.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         janelaNova.setLayout(null);
 
